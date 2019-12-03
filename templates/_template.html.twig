@@ -9,9 +9,9 @@ ecraser le contenu du bloc body defini dans le template parent#}
 
     <nav class="navbar has-background-grey-darker is-dark">
         <div class="navbar-brand">
-            <a class="navbar-item" href="#">
+            <a class="navbar-item" href="{{ path('home') }}">
                 <p class="subtitle is-4 has-text-primary">
-                    <i class="fab fa-korvue"></i><b>RITIK</b>
+                    <i class="fab fa-korvue"></i><b>KRITIK</b>
                 </p>
             </a>
             <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -22,10 +22,10 @@ ecraser le contenu du bloc body defini dans le template parent#}
         </div>
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item" href="{{ path('/artist-list') }}">
+                <a class="navbar-item" href="{{ path('artist_list') }}">
                     Artistes
                 </a>
-                <a class="navbar-item" href="#">
+                <a class="navbar-item" href="{{ path('ranking_news') }}">
                     Nouveautés
                 </a>
             </div>

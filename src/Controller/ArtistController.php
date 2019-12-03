@@ -18,7 +18,7 @@ class ArtistController extends AbstractController
      */
     public function index()
     {
-        return $this->render('list.html.twig');
+        return $this->render('artist/list.html.twig');
 
 
     }
