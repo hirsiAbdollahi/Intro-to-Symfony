@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -25,6 +27,16 @@ class Artist
      * @ORM\Column(type="text", nullable=true)
      */
     private $description;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Record", mappedBy="artist", orphanRemoval=true)
+     */
+    private $records;
+
+    public function __construct()
+    {
+        $this->records = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -51,6 +63,37 @@ class Artist
     public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Record[]
+     */
+    public function getRecords(): Collection
+    {
+        return $this->records;
+    }
+
+    public function addRecord(Record $record): self
+    {
+        if (!$this->records->contains($record)) {
+            $this->records[] = $record;
+            $record->setArtist($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRecord(Record $record): self
+    {
+        if ($this->records->contains($record)) {
+            $this->records->removeElement($record);
+            // set the owning side to null (unless already changed)
+            if ($record->getArtist() === $this) {
+                $record->setArtist(null);
+            }
+        }
 
         return $this;
     }

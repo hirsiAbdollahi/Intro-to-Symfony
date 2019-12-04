@@ -27,7 +27,7 @@ abstract class BaseFixture extends Fixture
         $this->faker = Factory::create('fr_FR');
 
         //Appel de la methode pour generer les données
-        $this->loaddata($manager);
+        $this->loadData($manager);
 
     }
 
@@ -47,7 +47,7 @@ abstract class BaseFixture extends Fixture
             $entity =$factory($i);
 
             if ($entity==null){
-                throw new \LogicException('Tu a oublié de retourner');
+                throw new \LogicException('Tu a oublié de retourner l\'entité');
             }
 
             //Avertir Doctrine pour l'enregistrement de l'entité
