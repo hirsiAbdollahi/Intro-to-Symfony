@@ -21,3 +21,5 @@ yarn-error.log
 
 ###>Ignorer le dossier cree par PHPSTORM###
 /.idea
+/.idea/workspace.xml
+

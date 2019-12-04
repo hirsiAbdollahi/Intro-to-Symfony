@@ -15,21 +15,9 @@ class HomeController extends AbstractController
     /**
      * @Route("/", name="home")
      */
-    public function index(EntityManagerInterface $em)
+    public function index()
     {
-        //Creation d'une nouvelle instance d'artiste
-        $artist =(new Artist())
-            ->setName('Hirsi')
-            ->setDescription('Pas un vrai artiste...');
 
-        //INSERT/UPDATE
-        $em->persist($artist);
-
-        //DELETE
-        //$em->remove($entity);
-
-        //Execution des requetes SQL
-        $em->flush();
 
         return $this->render('index.html.twig', [
 
