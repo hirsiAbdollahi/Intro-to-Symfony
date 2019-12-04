@@ -19,5 +19,5 @@ npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
-//Ignorer le dossier cree par PHPSTORM
+###>Ignorer le dossier cree par PHPSTORM###
 /.idea
