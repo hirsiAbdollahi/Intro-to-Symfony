@@ -1,20 +1,43 @@
-{% extends '_template.html.twig' %}
+{# templates/artists/list.html.twig #}
+{% extends "_template.html.twig" %}
 
-
-{% block title  %}
+{% block title %}
     Artistes
 {% endblock %}
 
 {% block content %}
-
     <div class="section">
-        <h2 class="title">Artistes </h2>
+        <h2 class="title">Artistes: {{ artist_list|length }}</h2>
 
+        <div class="columns is-multiline">
+            {% for artist in artist_list %}
+                {# @var artist \App\Entity\Artist #}
+                <div class="column is-one-quarter">
+                    <div class="box">
+                        <article class="media">
+                            <div class="media-left">
+                                <figure class="image is-128x128">
+                                    <img src="https://loremflickr.com/256/256/artist,music/all?lock={{ artist.id }}" alt="Image">
+                                </figure>
+                            </div>
 
-
+                            <div class="media-content">
+                                <div class="content">
+                                    <p>
+                                        <a href="{{ path('artist_page', {id: artist.id}) }}" class="has-text-primary">
+                                            <strong>{{ artist.name }}</strong>
+                                        </a>
+                                        <br>
+                                        <small>Nombre d'albums: {{ artist.records|length }}</small>
+                                        <br>
+                                        {{ artist.description }}
+                                    </p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
-
 {% endblock %}
-
-
-

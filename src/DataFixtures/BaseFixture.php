@@ -4,87 +4,104 @@
 namespace App\DataFixtures;
 
 
-use doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
 
 abstract class BaseFixture extends Fixture
 {
-    /** @var ObjectManager*/
+    /** @var ObjectManager */
     private $manager;
-    /** @var Generator*/
+    /** @var Generator */
     protected $faker;
-    /**Liste des references aux entites generees par les fixtures
-    */
-    private $references=[];
+    /** Liste des références aux entités générées par les fixtures */
+    private $references = [];
 
-    //Methode à implementer par les classes enfants
-    //dans laquelle generer les fausses données
+    // Méthode à implémenter par les classes enfant dans laquelle générer les fausses données
+    private $referenceRepositor;
 
     abstract protected function loadData(ObjectManager $manager);
 
+    // Méthode imposée par Doctrine
     public function load(ObjectManager $manager)
     {
-        $this->manager =$manager;
+        $this->manager = $manager;
         $this->faker = Factory::create('fr_FR');
 
-        //Appel de la methode pour generer les données
+        // Appel de la méthode pour généreer les données
         $this->loadData($manager);
-
     }
 
-
     /**
-     * Creer plusieurs entites
-     * @param int $count nombre d'entites a creer
-     * @param string $groupName nom associée aux entites generees
-     * @param callable $factory fonction pour creer 1 entit
+     * Créer plusieurs entités
+     * @param int $count nombre d'entités à créer
+     * @param string $groupName nom associé aux entités générées
+     * @param callable $factory fonction pour créer l'entité
      */
 
-
-    protected function createMany(int $count,callable $factory, string $groupName)
+    protected function createMany(int $count, string $groupName, callable $factory)
     {
-        //Executer $factory $count fois
-        for ($i=0; $i <$count; $i++){
-            // La $factory doit retourner l'entite cree
-            $entity =$factory($i);
+        // Exécuter $factory $count fois
+        for ($i=0; $i<$count; $i++)
+        {
+            // La $factory doit retourner l'entite créée
+            $entity = $factory($i);
 
-            if ($entity==null){
-                throw new \LogicException('Tu a oublié de retourner l\'entité');
+            if ($entity === null)
+            {
+                throw new \LogicException('Tu as oublié de retourner l\'entité !!!');
             }
 
-            //Avertir Doctrine pour l'enregistrement de l'entité
+            // Avertir doctrine pour l'enregistrement de l'entite
             $this->manager->persist($entity);
 
-            //Ajouter une reference pour l'entite
-            $this->addReference(sprintf('%s_%d',$groupName,$i), $entity);
+            // Ajouter une référence pour l'entité
+            $this->addReference(sprintf('%s_%d', $groupName, $i), $entity);
 
         }
-
     }
 
-
     /**
-     * Obtenir une entite aleatoire d'un groupe
+     * Obtenir une entité aléatoire d'un groupe
+     * @throws \Exception
      */
 
     protected function getRandomReference(string $groupName)
     {
-        // Si les references ne sont pas presentes dans la propriete:
-        if (!isset($this->references[$groupName])){
-            // Recuperation des references
-            foreach ($this->referenceRepository->getReferences() as $key => $ref){
-                if (strpos($key,$groupName.'_')===0){
-                    $this->references[$groupName][]=$ref;
+        // Si les références ne sont pas présentes dans la propriété:
+        if(!isset($this->references[$groupName])) {
+            // Récupération des références
+            foreach ($this->referenceRepository->getReferences() as $key => $ref) {
+                if (strpos($key, $groupName . '_') === 0) {
+                    $this->references[$groupName][] = $key;
                 }
             }
         }
 
-     //Retourner une reference aleatoire
-     $randomReferencekey=  $this->faker->randomElement($this->references[$groupName]);
-     return $this->getReference($randomReferencekey);
+        // Vérifier que des références ont été enregistrées
+        if(!isset($this->references[$groupName]) || empty($this->references[$groupName])) {
+            throw new \Exception(sprintf('Aucune référence trouvée pour "%s"', $groupName));
+        }
 
+
+        // Retourner une référence aléatoire
+        $randomReferenceKey = $this->faker->randomElement($this->references[$groupName]);
+
+        return $this->getReference($randomReferenceKey);
     }
 
+    /**
+     * Récupérer plusieurs entités
+     */
+
+    protected function getRandomReferences(string $groupName, int $amount)
+    {
+        $references = [];
+        while (count($references)<$amount){
+            $references[] = $this->getRandomReference($groupName);
+        }
+
+        return $references;
+    }
 }

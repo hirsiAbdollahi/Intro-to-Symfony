@@ -19,6 +19,19 @@ class RecordRepository extends ServiceEntityRepository
         parent::__construct($registry, Record::class);
     }
 
+    /**
+     * Récupérer les sorties de moins d'un mois
+     */
+    public function getLastMonthReleases()
+    {
+        return $this->createQueryBuilder('r')
+            ->where('r.releasedAt > :last_month')
+            ->setParameter('last_month', new \DateTime('-1 month'))
+            ->orderBy('r.releasedAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return Record[] Returns an array of Record objects
     //  */

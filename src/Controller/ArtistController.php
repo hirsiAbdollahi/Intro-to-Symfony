@@ -2,24 +2,35 @@
 
 namespace App\Controller;
 
+use App\Repository\ArtistRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Entity\Artist;
 /**
- * @Route("/artist", name="artist_")
+ * @Route("/artist", name="artist")
  */
 class ArtistController extends AbstractController
 {
     /**
-     * URI: /artist-list
-     * Nom: artist_list
-     * @Route("-list", name="list")
+     * @Route("-list", name="_list")
      */
-    public function index()
+
+    public function index(ArtistRepository $artistRepository)
     {
-        return $this->render('artist/list.html.twig');
-
-
+        return $this->render('artist/list.html.twig' , [
+            'artist_list' => $artistRepository->findAll()
+        ]);
     }
+
+    /**
+     * @Route("/{id}", name="_page")
+     */
+
+    public function page(Artist $artist)
+    {
+        return $this->render('artist/artist_page.html.twig', [
+            'artist'=>$artist
+        ]);
+    }    
+
 }
