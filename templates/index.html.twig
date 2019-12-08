@@ -10,6 +10,9 @@ Accueil
 <div class="section">
     <h2 class="title">Accueil </h2>
 
+    {% if is_granted("ROLE_ADMIN")%}
+        Vous etes administrateurs
+    {% endif%}
 
 
 </div>

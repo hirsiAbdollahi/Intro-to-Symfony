@@ -33,10 +33,14 @@ ecraser le contenu du bloc body defini dans le template parent#}
                 <div class="navbar-item">
                     <div class="buttons">
                         <a class="button is-primary is-small" href="#">
-                            <strong>Inscription</strong>
+                            {% if app.user %} 
+                            <strong>  {{ app.user.pseudo}} </strong> 
+                            {% else %} 
+                            <strong> Inscription  </strong>
+                            {% endif %}
                         </a>
-                        <a class="button is-light is-small" href="#">
-                            Connexion
+                        <a class="button is-light is-small" href=" {% if app.user %} {{ path('app_logout')}} {% else %} {{path('app_logout')}} {% endif %}" >
+                            {% if app.user %} Déconnexion {% else %} Connexion {% endif %}
                         </a>
                     </div>
                 </div>
