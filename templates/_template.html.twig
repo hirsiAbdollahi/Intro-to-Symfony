@@ -52,6 +52,12 @@
                                 Connexion
                             </a>
                         {% endif %}
+                        {% if is_granted('ROLE_EDITOR') %}
+                            <a href="{{ path('admin_dashboard') }}" class="button is-primary is-small">
+                                <i class="fas fa-shield-alt"></i>
+                                Back Office
+                            </a>
+                        {% endif %}
                     </div>
                 </div>
 

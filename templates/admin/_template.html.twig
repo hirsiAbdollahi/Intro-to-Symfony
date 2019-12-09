@@ -1,0 +1,42 @@
+{# hériter de base.html.twig #}
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <nav class="navbar has-background-primary is-primary">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="{{ path('admin_dashboard') }}">
+                <i class="fas fa-shield-alt"></i>
+                Back Office
+            </a>
+
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="#">
+                    Toto
+                </a>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a href="{{ path('home') }}" class="button is-primary is-small">
+                            <i class="fas fa-reply"></i>
+                        </a>
+                        <a href="{{ path('app_logout') }}" class="button is-light is-small">
+                            Déconnexion
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    {% block content %}{% endblock %}
+{% endblock %}
