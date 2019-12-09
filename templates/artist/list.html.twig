@@ -9,6 +9,20 @@
     <div class="section">
         <h2 class="title">Artistes: {{ artist_list|length }}</h2>
 
+        <section class="section has-background-white-ter">
+            <h3 class="subtitle">Recherche</h3>
+
+            {{ form_start(search_form) }}
+                {{ form_row(search_form.name, {
+                    label: 'Nom de l\'artiste'
+                }) }}
+
+                <button class="button is-primary is-fullwidth" type="submit">
+                    Rechercher
+                </button>
+            {{ form_end(search_form) }}
+        </section>
+
         <div class="columns is-multiline">
             {% for artist in artist_list %}
                 {# @var artist \App\Entity\Artist #}
