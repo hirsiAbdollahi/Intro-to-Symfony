@@ -34,12 +34,7 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=25)
-     */
-    private $username;
-
-    /**
-     * @ORM\Column(type="string", length=25, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true)
      */
     private $pseudo;
 
@@ -67,7 +62,7 @@ class User implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email; //(!empty($this->email)) ? $this->email : $this->pseudo;
+        return (string) $this->email;
     }
 
     /**
@@ -76,7 +71,9 @@ class User implements UserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // Les roles sont des chaines de caractères commençant par ROLE_
+        // on peut créer n'importe quel role
+        // mais un utilisateur doit avoir ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -117,15 +114,11 @@ class User implements UserInterface
      */
     public function eraseCredentials()
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        // If youo
+        // store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
+        // information sensible dans un court délai pour un utilisateur
 
-    public function setUsername(string $username): self
-    {
-        $this->username = $username;
-
-        return $this;
     }
 
     public function getPseudo(): ?string
@@ -133,7 +126,7 @@ class User implements UserInterface
         return $this->pseudo;
     }
 
-    public function setPseudo(?string $pseudo): self
+    public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
 

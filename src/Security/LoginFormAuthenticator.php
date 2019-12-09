@@ -20,6 +20,7 @@ use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticato
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
+
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {
     use TargetPathTrait;
@@ -52,15 +53,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     public function getCredentials(Request $request)
     {
         $credentials = [
-            'email' => $request->request->get('email'),
-            'pseudo'=> $request->request->get('pseudo'),
+            'username' => $request->request->get('username'),
             'password' => $request->request->get('password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
             Security::LAST_USERNAME,
-           ($credentials['email'] || $credentials['pseudo'])
-        );
+           $credentials['username']);
+        
 
         return $credentials;
     }
@@ -76,23 +76,19 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         }
 
         
-        if ($credentials['email']) {
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
+        // Recuperation de UserRepository
+        $userRepository = $this->entityManager->getRepository(User::class);
+
+        //Recuperation par email ou pseudo
+        $user = $userRepository->findOneBY(['email'=> $credentials['username']])
+                ?? $userRepository->findOneBY(['pseudo'=> $credentials['username']]);
 
             if (!$user) {
             // fail email authentication with a custom error
-                throw new CustomUserMessageAuthenticationException('Adresse email non reconnu.');
+                throw new CustomUserMessageAuthenticationException(sprintf('Aucun utilisateur trouvé pour "%s" ', $credentials['username']));
                 }
-        }
         
-        if ($credentials['pseudo']) {
-            $user = $this->entityManager->getRepository(User::class)->findOneBy(['pseudo' => $credentials['pseudo']]);
 
-                if (!$user) {
-            // fail pseudo authentication with a custom error
-                throw new CustomUserMessageAuthenticationException('Pseudo non reconnu.');
-                }   
-        }
 
         
         return $user;
