@@ -51,6 +51,20 @@
                         </article>
                     </div>
                 </div>
+             {% else %}
+                    <div class="column is-full">
+                        <section class="hero is-warning">
+                            <div class="hero-body">
+                                <div class="container">
+                                    <h3 class="title">
+                                        <i class="far fa-frown"></i>&nbsp;
+                                        Aucun résultat pour votre recherche !
+                                    </h3>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                
             {% endfor %}
         </div>
     </div>

@@ -2,41 +2,57 @@
 
 namespace App\Controller;
 
-use App\Repository\ArtistRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Artist;
 use App\Form\Artist\SearchFormType;
+use App\Repository\ArtistRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/artist", name="artist")
+ * @Route("/artist", name="artist_")
  */
 class ArtistController extends AbstractController
 {
     /**
-     * @Route("-list", name="_list")
+     * URI: /artist-list
+     * Nom: artist_list
+     * @Route("-list", name="list")
      */
-
-    public function index(ArtistRepository $artistRepository)
+    public function index(Request $request, ArtistRepository $artistRepository)
     {
-        //Creation du formulaire 
-        $form = $this->createForm(SearchFormtype::class);
+        //Création du formulaire
+        $form = $this->createForm(SearchFormType::class);
+        // Traitement de la requeet par le formulaire
+        $form->handleRequest($request);
 
-        return $this->render('artist/list.html.twig' , [
-            'artist_list' => $artistRepository->findAll(),
+        // Si le formulaire est envoyé & valide
+        if ($form->isSubmitted() && $form->isValid()) {
+            $recherche = $form->getData()['name'];
+
+            $list = $artistRepository->searchByName($recherche);
+            $title = sprintf('Résultats pour "%s"', $recherche);
+        }
+        else{
+            $list = $artistRepository->findAll();
+            $title = 'Artistes' ;
+
+        }
+
+        return $this->render('artist/list.html.twig', [
+            'artist_list' => $list,
+            'title' => $title,
             'search_form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/{id}", name="_page")
+     * @Route("/{id}", name="page")
      */
-
     public function page(Artist $artist)
     {
         return $this->render('artist/artist_page.html.twig', [
-            'artist'=>$artist
+            'artist' => $artist
         ]);
-    }    
-
+    }
 }

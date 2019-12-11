@@ -31,6 +31,16 @@ class ArtistRepository extends ServiceEntityRepository
         ->getResult();
     }
 
+    public function searchByName()
+    {
+
+        return $this->createQueryBuilder('a') 
+        ->where('a.name LIKE :name' )
+        ->setParameter('name', '%name%')
+        ->getQuery()
+        ->getResult();
+    }
+
 
     // /**
     //  * @return Artist[] Returns an array of Artist objects
