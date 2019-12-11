@@ -20,8 +20,9 @@ class UserProfileController extends AbstractController
      */
     public function index(Request $request, EntityManagerInterface $em)
     {
-        // Création du formulaire en passant les données (l'utilisateur courant)
+        // Création du formulaire en passant les données ( recuperation de l'utilisateur courant)
         $user = $this->getUser();
+        //Passage de l'utilisateur  au formulaire pour pre-remplir les champs
         $profileForm = $this->createForm(UserProfileFormType::class, $user);
         $profileForm->handleRequest($request);
 
@@ -29,9 +30,17 @@ class UserProfileController extends AbstractController
         if ($profileForm->isSubmitted() && $profileForm->isValid()) {
             // Formulaire lié à une classe entité: getData() retourne l'entité
             $user = $profileForm->getData();
-            dd($user);
+            
+            // Mise à jour de l'entite en BDD
+            $em->persist($user);
+            $em->flush();
+
+            // Ajout d'un message flash
+            $this->addFlash('success', 'Votre profil a été mis à jour.');
         }
 
-        return $this->render('user/profile.html.twig');
+        return $this->render('user/profile.html.twig', [
+            'profile_form'=> $profileForm->createView()
+        ]);
     }
 }

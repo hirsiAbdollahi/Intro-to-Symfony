@@ -28,7 +28,7 @@ class UserProfileFormType extends AbstractType
                 'constraints' => [
                     new NotBlank(['message' => 'Veuillez indiquer un pseudo.']),
                     new Regex([
-                        'pattern' => '/^[a-z0-9-_]$/i',
+                        'pattern' => '/^[a-z0-9-_]+$/i',
                         'message' => 'Le pseudo ne peut contenir que des caractères alphanumériques.'
                     ]),
                     new Length([
