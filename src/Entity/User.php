@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @UniqueEntity ("email", message="Cette adresse email est deja utilisée")
  * @UniqueEntity ("pseudo", message="Ce pseudo n'est pas disponible")
+ * @ORM\HasLifecycleCallbacks()
  */
 class User implements UserInterface
 {
@@ -48,6 +49,16 @@ class User implements UserInterface
      */
     private $notes;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $is_confirmed;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $security_token;
+
     public function __construct()
     {
         $this->notes = new ArrayCollection();
@@ -61,6 +72,18 @@ class User implements UserInterface
      {
          return $this->getUsername();
      }
+
+    
+    /**
+     * @ORM\PrePersist()
+     */
+    public function prePersist()
+    {
+        //definir un jeton s'il n'y en a pas
+        if($this->security_token===null){
+            $this->renewToken();
+        }
+    }
 
      
     public function getId(): ?int
@@ -187,5 +210,37 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function getIsConfirmed(): ?bool
+    {
+        return $this->is_confirmed;
+    }
+
+    public function setIsConfirmed(bool $is_confirmed): self
+    {
+        $this->is_confirmed = $is_confirmed;
+
+        return $this;
+    }
+
+    public function getSecurityToken(): ?string
+    {
+        return $this->security_token;
+    }
+
+    public function setSecurityToken(string $security_token): self
+    {
+        $this->security_token = $security_token;
+
+        return $this;
+    }
+
+    public function renewToken() : self
+    {
+        // Creation d'un jeton
+        $token =bin2hex(random_bytes(16));
+
+        return $this->setSecurityToken($token);
     }
 }

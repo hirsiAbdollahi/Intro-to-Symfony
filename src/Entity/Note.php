@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\NoteRepository")
- * @ORM\HasLifeCycleCallBacks
+ * @ORM\HasLifecycleCallbacks()
  */
 class Note
 {
@@ -45,13 +45,14 @@ class Note
     private $createdAt;
 
     /**
-     * mMethode appelee avant le 1ier enregistreement de l'entité 
-     * @ORM\PrePersist
+     * Méthode appelée avant le 1er enregistrement de l'entité
+     * @ORM\PrePersist()
      */
-    public function prePersist ()
+
+    public function prePersist()
     {
-        // Definir la date de creation par defaut
-        if ($this->createdAt === null){
+        //Définir la date de création par défaut
+        if ($this->createdAt === null) {
             $this->createdAt = new \DateTime();
         }
     }
