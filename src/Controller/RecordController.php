@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
  * @Route("/record", name="record_")
@@ -61,5 +62,14 @@ class RecordController extends AbstractController
             'record' => $record,
             'note_form' => isset($noteForm) ? $noteForm->createView() : null
         ]);
+    }
+
+    /**
+     * @Route("/note-delete/{id}", name="delete_note")
+     * @isGranted("NOTE_DELETE", subject="note")
+     */
+    public function deleteNote(Note $note)
+    {
+        dd("Vous avez le droit de suppression de la note");
     }
 }

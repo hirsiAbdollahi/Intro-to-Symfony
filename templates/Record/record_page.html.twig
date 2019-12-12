@@ -71,6 +71,13 @@
                     {{ note.comment }}
                     <hr>
                     <small>
+                        {% if is_granted('NOTE_DELETE', note) %}
+                            <a href="{{ path('record_delete_note', {id: note.id}) }}" class="button is-danger is-small">
+                                <i class="far fa-times-circle"></i>&nbsp;
+                                Supprimer
+                            </a>
+                        {% endif %}
+
                         Par <b>{{ note.user.pseudo }}</b>
                         le <b>{{ note.createdAt|date('d/m/Y') }}</b>
                         à <b>{{ note.createdAt|date('H:i') }}</b>.
