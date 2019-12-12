@@ -11,6 +11,9 @@
             <div class="media-content">
                 <div class="content">
                     <p>
+                    <span class="tag is-primary">
+                            {{ record.averageNote|number_format(2)}}/10
+                    </span>
                         <a href="{{ path('record_page', {id: record.id}) }}" class="has-text-primary">
                             <strong>{{ record.title }}</strong>
                         </a>
