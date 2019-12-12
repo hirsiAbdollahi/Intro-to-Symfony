@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Record;
+use App\Entity\Note;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -32,6 +33,27 @@ class RecordRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+
+    /**
+     * recuperer le top 100 
+     * (records les mieux notes sortis il y a moins d'un an)
+     */
+     public function getBestRatedOYear ()
+     {
+         return $this->createQueryBuilder('r')
+         ->innerJoin('r.notes', 'n' )
+         ->where ('r.releasedAt > :last_year')
+         ->setParameter('last_year', new \DateTime('-1 year'))
+         ->groupBy('r.id')
+         ->orderBy('AVG(n.value)', 'DESC')
+         ->setMaxResults(100)
+         ->getQuery()
+         ->getResult();
+     }
+
+
+    
+    
     // /**
     //  * @return Record[] Returns an array of Record objects
     //  */
