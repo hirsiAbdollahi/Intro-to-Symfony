@@ -1,0 +1,17 @@
+
+
+<h1>Welcome {{ pseudo|capitalize }}!</h1>
+
+<p>
+    {{ pseudo|capitalize }} tu viens de t' inscrire avec l'email:
+</p>
+<p><code>{{ email.to[0].address  }}</code></p>
+
+<p>
+    <a href="{{url}}">Clique ici pour activer ton compte</a>
+    (ce lien est valide jusqu'au {{ expiration_date|date('d/m') }})
+</p>
+
+
+
+

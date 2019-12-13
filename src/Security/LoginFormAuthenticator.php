@@ -88,9 +88,15 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
                 throw new CustomUserMessageAuthenticationException(sprintf('Aucun utilisateur trouvé pour "%s" ', $credentials['username']));
                 }
         
-
-
+        // Verifier que l'utilisateur est bien confirmé
+        $isUserConfirmed = $userRepository->findBY(['email'=> $credentials['username'], 'is_confirmed'=> true])
+                            ?? $userRepository->findBY(['pseudo'=> $credentials['username'],'is_confirmed'=> true]);
+          
+            if (!$isUserConfirmed) {
+                throw new CustomUserMessageAuthenticationException(sprintf('Veuillez confirmer votre inscription "%s" ', $credentials['username']));
+                }
         
+
         return $user;
     }
 

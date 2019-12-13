@@ -16,6 +16,15 @@
                     Vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
                 </div>
             {% endif %}
+
+            {# Flash messages confirmation compte#}
+            {% for label, messages in app.flashes(['confirm1', 'confirm2', 'confirm2']) %}
+                {% for message in messages %}
+                     <div class="notification is-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
             
             {# si une erreur survient #}
             {% if error %}

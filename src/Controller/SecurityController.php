@@ -11,9 +11,19 @@ use App\Form\UserRegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\User;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Security\Core\Security;
+use App\Repository\UserRepository;
 
 class SecurityController extends AbstractController
 {
+    public function __construct(MailerInterface $mailer)
+    {
+        $this->mailer = $mailer;
+    }
+
     /**
      * @Route("/login", name="app_login")
      */
@@ -31,9 +41,7 @@ class SecurityController extends AbstractController
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
     }
 
-
-
-     /**
+    /**
      * @Route("/register", name="app_register")
      */
     public function Register(Request $request, EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder)
@@ -56,20 +64,67 @@ class SecurityController extends AbstractController
             $em->persist($user);
             $em->flush();
 
+            //Envoie d'un mail de confirmation
+            $email = (new TemplatedEmail())
+            ->from('lmarcus4280@yahoo.com')
+            ->to($user->getEmail())
+            ->subject(sprintf('"%s" confirmer votre inscription ',$user->getPseudo()))
+            ->htmlTemplate('email/signup.html.twig')
+            ->context([
+                'expiration_date' => new \DateTime('+7 days'),
+                'pseudo' => $user->getPseudo(),
+                'url'=> 'http://127.0.0.1:8000/user-confirmation/' . $user->getId() . '/' . $user->getSecurityToken()
+                
+                ])
+            ;   
+
+            $this->mailer->send($email);
             $this->addFlash('success', 'Vous etes inscrits!');
-
         }
-
-
         return $this->render('security/register.html.twig', [
-            'register_form'=> $registerForm->createView()
-            
+            'register_form'=> $registerForm->createView()    
         ]);       
     }
 
+    /**
+     * @Route("/user-confirmation/{id}/{token}", name="user_confirmation")
+     */
+    public function confirmedUser( Security $security, $token, $id, UserRepository $userRepository, EntityManagerInterface $em)
+    {
+        
+        $user = $userRepository->findOneBy(['id'=> $id]);
+        
+        // Si l'utilisateur a deja confirmé son compte 
+        if ($user->getIsConfirmed()===true) {
 
+            $this->addFlash('confirm1', 'Vous avez deja confirmé votre compte!');
+            return $this->redirectToRoute('app_login');
+        }
 
+        //Si le token ne correspond pas au securityToken de l'utilisateur
+        if ($token != $user->getSecurityToken()) {
+            
+            $flash =$this->addFlash('comfirm2', 'Ce compte ne correspond pas au votre!');
+            return $this->redirectToRoute('app_login', []);
+        }
 
+        //Si le token correspond au securityToken de l'utilisateur
+        if ($token === $user->getSecurityToken()) {
+            $user->setIsConfirmed(true)
+                 ->renewToken()
+            ;
+
+            $em->persist($user);
+            $em->flush();
+
+            $this->addFlash('confirm3', 'Votre compte vient d\'etre confirmé');
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('security/confirmation.html.twig', [
+               
+        ]);   
+    }
 
     /**
      * @Route("/logout", name="app_logout")
