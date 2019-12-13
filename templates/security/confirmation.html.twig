@@ -14,10 +14,25 @@
 </div>
 
 
-{% include "includes/flash_message.html.twig" %}  
+ {# Flash messages confirmation compte#}
+ {% for label, messages in app.flashes(['confirm1', 'confirm2', 'confirm3']) %}
+    {% for message in messages %}
+         <div class="notification is-{{ label }}">
+                {{ message }}
+        </div>
+   {% endfor %}
+{% endfor %}
 
-
-
+<div class="section">
+    {{ form_start(confirmation_form) }}
+        {{ form_row(confirmation_form.email, {
+            label: 'Votre email'
+        }) }}
+        <button class="button is-success" type="submit">
+        Renvoyez mail de confirmation
+       </button>
+    {{ form_end(confirmation_form) }}
+</div>
 
 
 

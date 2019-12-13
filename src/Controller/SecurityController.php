@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use App\Form\UserEmailConfirmationType;
 use App\Form\UserRegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -64,7 +65,7 @@ class SecurityController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            //Envoie d'un mail de confirmation
+            //Envoi d'un mail de confirmation
             $email = (new TemplatedEmail())
             ->from('lmarcus4280@yahoo.com')
             ->to($user->getEmail())
@@ -121,10 +122,67 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('security/confirmation.html.twig', [
-               
-        ]);   
+        return $this->render();   
     }
+
+    /**
+     * @Route("/email-confirmation", name="email_confirmation")
+     */
+    public function resendConfirmation(Request $request, EntityManagerInterface $em, UserRepository $userRepository)
+    {
+        $user = new User();
+        $confirmationForm= $this->createForm(UserEmailConfirmationType::class, $user);
+        $confirmationForm->handleRequest($request);
+
+        if ($confirmationForm->isSubmitted() && $confirmationForm->isValid()) {
+
+            // si l'adresse mail est inconnu
+            if (!$userRepository->findOneBy(['email'=> $confirmationForm['email']->getData()])){
+                
+                $this->addFlash('confirm4', 'Votre email n\'est pas reconnu ');
+                return $this->redirectToRoute('app_register');
+            }
+
+            //Si le compte est deja confirmé
+
+            if ($userRepository->findBy(['email'=> $confirmationForm['email']->getData(), 'is_confirmed' => true])){
+                
+                $user->$userRepository->findOneBy(['email'=> $confirmationForm['email']->getData()]);
+                $user->renewToken();
+                $this->addFlash('confirm1', 'Vous avez deja confirmé votre compte!');
+                return $this->redirectToRoute('app_login');
+
+            }
+
+            //Si le compte n'est pas encore confirmé
+            if ($userRepository->findBy(['email'=> $confirmationForm['email']->getData(), 'is_confirmed' => false])){
+
+            $user->$userRepository->findOneBy(['email'=> $confirmationForm['email']->getData()]);
+            $user->renewToken();
+            //Envoi d'un mail de confirmation
+            $email = (new TemplatedEmail())
+            ->from('lmarcus4280@yahoo.com')
+            ->to($user->getEmail())
+            ->subject(sprintf('"%s" confirmer votre inscription ',$user->getPseudo()))
+            ->htmlTemplate('email/signup.html.twig')
+            ->context([
+                'expiration_date' => new \DateTime('+7 days'),
+                'pseudo' => $user->getPseudo(),
+                'url'=> 'http://127.0.0.1:8000/user-confirmation/' . $user->getId() . '/' . $user->getSecurityToken()
+                
+                ])
+            ;  
+            $this->addFlash('confirm5', 'Un mail vient de vous etre envoyé ');
+            return $this->redirectToRoute('app_login');
+
+            }
+        }
+
+        return $this->render('security/confirmation.html.twig', [
+            'confirmation_form'=> $confirmationForm->createView()
+            ]);   
+    }
+
 
     /**
      * @Route("/logout", name="app_logout")

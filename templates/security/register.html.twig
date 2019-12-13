@@ -13,7 +13,14 @@
     <h2 class="title"> Inscription</h2>
 </div>
 
-
+{# Flash messages confirmation compte#}
+ {% for label, messages in app.flashes(['confirm4']) %}
+    {% for message in messages %}
+         <div class="notification is-{{ label }}">
+                {{ message }}
+        </div>
+   {% endfor %}
+{% endfor %}
 {% include "includes/flash_message.html.twig" %}  
 
 

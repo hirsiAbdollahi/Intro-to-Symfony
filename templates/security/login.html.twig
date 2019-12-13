@@ -18,7 +18,7 @@
             {% endif %}
 
             {# Flash messages confirmation compte#}
-            {% for label, messages in app.flashes(['confirm1', 'confirm2', 'confirm2']) %}
+            {% for label, messages in app.flashes(['confirm1', 'confirm2', 'confirm3', 'confirm5']) %}
                 {% for message in messages %}
                      <div class="notification is-{{ label }}">
                         {{ message }}
@@ -47,11 +47,25 @@
                 
                 {# un champ caché pour la protection des failles CSRF #}
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <a class="navbar-item" href="{{ path('artist_list') }}">
+                    
+                </a>
                 
                 <button class="button is-primary is-fullwidth" type="submit">
                     Connexion
                 </button>
             </form>
         </div>
+        <div class="">
+    <p>
+      <a href="{{ path('email_confirmation') }}"> Recevoir un nouvel mail de confirmation</a>
+
+
     </div>
+
+
+  
+
+
 {% endblock %}
