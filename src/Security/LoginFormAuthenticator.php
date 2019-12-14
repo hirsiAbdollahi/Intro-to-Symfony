@@ -87,16 +87,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             // fail email authentication with a custom error
                 throw new CustomUserMessageAuthenticationException(sprintf('Aucun utilisateur trouvé pour "%s" ', $credentials['username']));
                 }
-        
-        // Verifier que l'utilisateur est bien confirmé
-        $isUserConfirmed = $userRepository->findBY(['email'=> $credentials['username'], 'is_confirmed'=> true])
-                            ?? $userRepository->findBY(['pseudo'=> $credentials['username'],'is_confirmed'=> true]);
-          
-            if (!$isUserConfirmed) {
-                throw new CustomUserMessageAuthenticationException(sprintf('Veuillez confirmer votre inscription "%s" ', $credentials['username']));
-                }
-        
-
+    
         return $user;
     }
 
@@ -105,10 +96,14 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
+         // Verifier d'abord que que le compte est bien confirmé est bien confirmé
+        if (!$user->getIsconfirmed()) {
+            throw new CustomUserMessageAuthenticationException('Vous devez confirmer votre compte avant de pouvoir vous connecter');
+        }
+
         $validation= $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
 
         if (!$validation) {
-            // fail authentication with a custom error
             throw new CustomUserMessageAuthenticationException('Mot de passe incorrect.');
         }
 

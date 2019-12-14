@@ -22,8 +22,8 @@ class UserRegistrationFormType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'constraints'=> [
-                    new NotBlank(['message' => 'Veuillez entrer un email.']),
-                    new Email(['message' => 'Veuillez rentrer une adresse valide.'])
+                    new NotBlank(['message' => 'Veuillez remplir ce champ.']),
+                    new Email(['message' => 'Veuillez indiquer une adresse email.'])
                 ]
             ])
             ->add('password', RepeatedType::class, [
@@ -34,7 +34,7 @@ class UserRegistrationFormType extends AbstractType
                 'first_options' => ['label'=>' Votre mot de passe'],
                 'second_options'=> ['label'=>'Confirmation de votre mot de passe'],
                 'constraints' => [
-                    new NotBlank(['message' => 'Veuillez indiquer un mot de passe.']),
+                    new NotBlank(['message' => 'Veuillez remplir ce champ.']),
                     new Regex([
                         'pattern' => '/^[a-z0-9-_]+$/i',
                         'message' => 'Le mot de passe ne peut contenir que des caractères alphanumériques.'
@@ -47,7 +47,7 @@ class UserRegistrationFormType extends AbstractType
                 ])
             ->add('pseudo', TextType::class, [
                 'constraints' => [
-                    new NotBlank(['message' => 'Veuillez indiquer un pseudo.']),
+                    new NotBlank(['message' => 'Veuillez remplir ce champ.']),
                     new Regex([
                         'pattern' => '/^[a-z0-9-_]+$/i',
                         'message' => 'Le pseudo ne peut contenir que des caractères alphanumériques.'

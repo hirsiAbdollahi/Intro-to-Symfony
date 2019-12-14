@@ -4,68 +4,65 @@
     Connexion
 {% endblock %}
 
-
 {% block content %}
     <div class="columns is-centered section">
         <div class="column is-one-third box">
             <h1 class="title has-text-primary has-text-centered">Connexion</h1>
-            
-            {# si l'utilisateur est déjà connecté / app variable globale#}
+
+            {# si l'utilisateur est déjà connecté #}
             {% if app.user %}
                 <div class="notification is-info">
                     Vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
                 </div>
             {% endif %}
 
-            {# Flash messages confirmation compte#}
-            {% for label, messages in app.flashes(['confirm1', 'confirm2', 'confirm3', 'confirm5']) %}
-                {% for message in messages %}
-                     <div class="notification is-{{ label }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endfor %}
-            
             {# si une erreur survient #}
             {% if error %}
                 <div class="notification is-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
-            
+
+            {# Affichage des messages flash #}
+            {% include 'includes/flash_message.html.twig' %}
+
             {# formulaire de connexion #}
             <form method="post">
                 <div class="field">
-                    <label class="label" for="inputUsername">Email ou Pseudo</label>
+                    <label class="label" for="inputUsername">Email ou pseudo</label>
                     <div class="control">
-                        <input class="input" type="text" value="{{ last_username }}" name="username" id="inputUsername"  require autofocus>
+                        <input class="input" type="text" value="{{ last_username }}" name="username" id="inputUsername" required autofocus>
                     </div>
+                </div>
+
                 <div class="field">
                     <label class="label" for="inputPassword">Mot de passe</label>
                     <div class="control">
                         <input class="input" type="password" name="password" id="inputPassword" required>
                     </div>
                 </div>
-                
+
                 {# un champ caché pour la protection des failles CSRF #}
                 <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-                <a class="navbar-item" href="{{ path('artist_list') }}">
-                    
-                </a>
-                
                 <button class="button is-primary is-fullwidth" type="submit">
                     Connexion
                 </button>
             </form>
+
+            <hr>
+            <div class="level">
+                <div class="level-left">
+                    <a href="{{ path('send_confirmation') }}" class="button is-info is-small">
+                        <i class="far fa-envelope"></i>&nbsp;
+                        Pas reçu ?
+                    </a>
+                </div>
+                <div class="level-right">
+                    <a href="" class="button is-info is-small">
+                        <i class="fas fa-key"></i>&nbsp;
+                        Mot de passe perdu ?
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="">
-    <p>
-      <a href="{{ path('email_confirmation') }}"> Recevoir un nouvel mail de confirmation</a>
-
-
     </div>
-
-
-  
-
-
 {% endblock %}
